@@ -1,0 +1,16 @@
+2019年7月15日
+1.用druid搭建环境spring boot
+2.实现增删改查
+3.webjar：
+    1）起始页设置：
+        默认：/web-inf/resource/,resources:
+                static,public:static
+        自定义：通自loginController来做（不推荐）
+                通过重新注册webMvcConfigurerAdapter类来完成
+     2）js,css,png等这些文件怎么办
+        以前：都生成一个jar包，可以用maven引入
+
+4.thymeleaf
+
+
+        启动报超时间错要加serverTimezone=UTC

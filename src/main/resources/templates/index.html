@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" >
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>登录</title>
+<meta name="keywords" content=""/>
+<meta name="description" content="" />
+<link rel="stylesheet" href="loginCss/css/style.css" />
+ </head>
+<body>
+
+<div class="login-container">
+	<h1>登录</h1>
+
+	<form action="login" method="post">
+		<div th:text="${msg}" style="font-size: 30px;color: red"></div>
+		<div>
+			<input type="text" name="username" class="username" placeholder="用户名"  id="user_username" />
+		</div>
+
+		<div>
+			<input type="password" name="password" class="password" placeholder="密码"  id="user_password" />
+		</div>
+
+
+		<button id="button" type="submit" >登 录</button>
+	</form>
+
+	<!--<a href="register">
+		<button type="button" class="register-tis">还有没有账号？</button>
+	</a>-->
+
+</div>
+<script src="loginCss/js/jquery.minregister.js"></script>
+<script src="loginCss/js/common.js"></script>
+<!--背景图片自动更换-->
+<script src="loginCss/js/supersized.3.2.7.min.js"></script>
+<script src="loginCss/js/supersized-init.js"></script>
+<!--表单验证-->
+<script src="loginCss/js/jquery.validate.min.js?var1.14.0"></script>
+
+</body>
+</html>

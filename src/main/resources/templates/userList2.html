@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="zh-cn" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="renderer" content="webkit">
+<title></title>
+<link rel="stylesheet" href="assert/css/pintuer.css">
+<link rel="stylesheet" href="assert/css/admin.css">
+<script src="assert/js/jquery.js"></script>
+<script src="assert/js/pintuer.js"></script>
+<script src="assert/js/bootstrapValidator.min.js"></script>
+<!--bootstrap model脚本-->
+<link rel="stylesheet" href="assert/css/bootstrap.min.css">
+<script src="assert/js/bootstrap.min.js"></script>
+<script>
+    $('#myModal').on('shown.bs.modal', function () {
+      $('#myInput').focus()
+    })
+</script>
+<!--模态框脚本end-->
+  <!--用户名唯一验证-->
+  <script type="text/javascript">
+    /*表单验证*/
+    var gets = true;//是否让表单提交
+    $(function(){
+      // 提示信息===========================================
+      $("input[name=username]").focus(function(){
+        if($(this).val() == this.defaultValue){
+          $(this).val('');
+        }
+      }).blur(function(){
+        if($(this).val() == ''){
+          $(this).val(this.defaultValue);
+        }
+      });
+      //当输入框失去焦点的时候，需要执行的方法
+      $("input[name=username]").blur(function(){doLgname();/*doOnlyname();*/});
+      $("input[name=password]").blur(function(){doPassword();});
+      $("input[name=repass]").blur(function(){doRepass();});
+    });
+    // 登陆名称的验证==========================
+    function doLgname(){
+      var t = $("input[name=username]");
+      var span = t.next();
+      if(/^\w{6,16}$/.test(t.val())){
+        span.html("填写正确").css({color:"green",fontSize:"12px"});
+        return true;
+      }else{
+        span.html("包含数字、字母、下划线，长度在6-16之间").css({color:"#ec4e4e",fontSize:"12px"});
+        return false;
+      }
+    }
+    // 登陆名称唯一性的验证==========================
+   /* function doOnlyname(){
+      var t = $("input[name=lgname]");
+      var span = t.next();
+      $.ajax({
+        //发送请求的地址1
+        url : 'stu-exist',
+        //服务器返回的数据类型
+        dataType : 'json',
+        data : {"username" :t.val()},
+        success : function(data) {
+          alert(data.valid);
+          if(data.valid()==true){
+            span.html("填写正确").css({color:"green",fontSize:"12px"});
+            return true;
+          }else{
+            span.html("用户名已被注册").css({color:"#ec4e4e",fontSize:"12px"});
+            return false;
+          }
+        }
+      })
+    }*/
+
+    // 密码的验证==========================
+    function doPassword(){
+      var t = $("input[name=password]");
+      var span = t.next();
+      if(t.val() == ''){
+        span.html("密码不能为空").css({color:"#ec4e4e",fontSize:"12px"});
+        return false;
+      }else{
+        span.html('');
+        if(/.{15,}/.test(t.val())){
+          span.html("密码长度不合法");
+          return false;
+        }
+        return true;
+      }
+    }
+    // 确认密码的验证==========================
+    function doRepass(){
+      var t = $("input[name=repass]");
+      var span = t.next();
+      if(t.val() == $("input[name=password]").val() && t.val() != ''){
+        span.html("填写正确").css({color:"green",fontSize:"12px"});
+        return true;
+      }else{
+        span.html("两次密码不一致").css({color:"#ec4e4e",fontSize:"12px"});
+        return false;
+      }
+    }
+    // 数据提交的时候执行的方法
+    function doTable(){
+      var lg = doLgname();
+      /*var lo = doOnlyname();*/
+      var pass = doPassword();
+      var repass = doRepass();
+      if(lg&&pass&&repass/*&&lo*/){
+        return true;
+      }else{
+        return false;
+      }
+    }
+    //搜索
+    function changesearch(){
+      var username = $("input[name=keywords]");
+      alert(username.val());
+      location.href="getLikeUsername?username="+username.val();
+    }
+
+    //单个删除
+    function del(id){
+      if(confirm("您确定要删除吗?")){
+        location.href="deleteUser?uid="+id;
+      }
+    }
+
+    //全选
+    $("#checkall").click(function(){
+      $("input[name='id[]']").each(function(){
+        if (this.checked) {
+          this.checked = false;
+        }
+        else {
+          this.checked = true;
+        }
+      });
+    })
+
+    //批量删除
+    function DelSelect(){
+      var Checkbox=false;
+      $("input[name='id[]']").each(function(){
+        if (this.checked==true) {
+          Checkbox=true;
+        }
+      });
+      if (Checkbox){
+        var t=confirm("您确认要删除选中的内容吗？");
+        if (t==false)
+        {
+          return false;
+        }
+        else{
+          var checkedID="";
+          $("input[name='id[]']").each(function() {
+            if (this.checked == true) {
+              checkedID += this.value + ",";
+            }
+          });
+          window.location.replace("deleteUsers?checkedID="+checkedID);
+        }
+      }
+      else{
+        alert("请选择您要删除的内容!");
+        return false;
+      }
+    }
+
+    //批量排序
+    function sorts(){
+      var Checkbox=false;
+      $("input[name='id[]']").each(function(){
+        if (this.checked==true) {
+          Checkbox=true;
+        }
+      });
+      if (Checkbox){
+
+        $("#listform").submit();
+      }
+      else{
+        alert("请选择要操作的内容!");
+        return false;
+      }
+    }
+  </script>
+  <!--用户名唯一验证结束-->
+</head>
+<body>
+
+<form method="post" action="" id="listform">
+  <div class="panel admin-panel">
+    <div class="panel-head"><strong class="icon-reorder"> 用户列表</strong> <a href="" style="float:right; display:none;">添加字段</a></div>
+    <div class="padding border-bottom">
+      <ul class="search" style="padding-left:10px;">
+        <li> <a class="button border-main icon-plus-square-o" data-toggle="modal" data-target="#myModal"> 添加用户</a> </li>
+        <li>
+          <input type="text" placeholder="请输入搜索关键字" name="keywords" class="input" style="width:250px; line-height:17px;display:inline-block" />
+          <a href="javascript:void(0)" class="button border-main icon-search" onclick="changesearch()" > 搜索</a></li>
+      </ul>
+    </div>
+    <table class="table table-hover text-center">
+      <tr>
+        <th width="100" style="text-align:left; padding-left:20px;">ID</th>
+        <th>头像</th>
+        <th>用户名</th>
+        <th>密码</th>
+        <th>登录时间</th>
+        <th>退出时间</th>
+        <th>权限</th>
+        <th width="310">操作</th>
+      </tr>
+      <volist name="list" id="vo">
+        <tr th:each="user:${users}">
+          <td style="text-align:left; padding-left:20px;"><input type="checkbox" name="id[]" th:value="${user.uid}" /></td>
+          <td width="10%"><img src="assert/images/y.jpg" alt="" width="70" height="50" /></td>
+          <td th:text="${user.getUsername()}"></td>
+          <td th:text="${user.getPassword()}"></td>
+          <td th:text="${user.getLoginTime()}"></td>
+          <td th:text="${user.getLoginOutTime()}"></td>
+          <td th:text="${user.getPower()}"></td>
+          <td>
+            <div class="button-group">
+              <a class="button border-main" th:href="'updateUser?uid='+${user.getUid()}">
+                <span class="icon-edit"></span> 修改
+              </a>
+              <a class="button border-red" th:onclick="'javascript:del('+${user.uid}+');'">
+                <span class="icon-trash-o"></span> 删除
+              </a>
+            </div>
+          </td>
+        </tr>
+          <tr>
+              <td style="text-align:left; padding:19px 0;padding-left:20px;"><input type="checkbox" id="checkall"/>
+                  全选 </td>
+              <td colspan="7" style="text-align:left;padding-left:20px;">
+                  <a class="button border-red icon-trash-o" style="padding:5px 15px;" onclick="DelSelect()">批量删除</a>
+                  <a href="javascript:void(0)" style="padding:5px 15px; margin:0 10px;" class="button border-blue icon-edit" onclick="sorts()"> 排序</a>
+              </td>
+          </tr>
+      <tr>
+        <td colspan="8">
+          <div class="pagelist">
+        <!--分页===============================================-->
+       <!-- <ul class="pagination pagination-lg" >
+          <li th:class="${indexPage==1}?'disabled' : ''">
+            <a th:href="@{'userList?page=' + ${indexPage -1}}">上一页</a>
+          </li>
+          <li th:if="${indexPage -3 >=1}" >
+            <a th:href="@{'userList?page=' + ${indexPage -3}}" th:text="${indexPage -3}" >1</a>
+          </li>
+          <li th:if="${indexPage -2 >=1}" >
+            <a th:href="@{'userList?page=' + ${indexPage -2}}" th:text="${indexPage -2}" >1</a>
+          </li>
+          <li th:if="${indexPage -1 >=1}" >
+            <a th:href="@{'userList?page=' + ${indexPage -1}}" th:text="${indexPage -1}" >1</a>
+          </li>
+          <li class="active">
+            <a href="#" th:text="${indexPage}" >1</a>
+          </li>
+          <li th:if="${indexPage+1 <=totalPage}" >
+            <a th:href="@{'userList?page=' + ${indexPage+1}}" th:text="${indexPage +1}" >1</a>
+          </li>
+          <li th:if="${indexPage+2 <=totalPage}" >
+            <a th:href="@{'userList?page=' + ${indexPage+2}}" th:text="${indexPage +2}" >1</a>
+          </li>
+          <li th:if="${indexPage+3 <=totalPage}" >
+            <a th:href="@{'userList?page=' + ${indexPage+3}}" th:text="${indexPage +3}" >1</a>
+          </li>
+          <li th:class="${indexPage==totalPage}?'disabled' : ''" >
+            <a th:href="@{'userList?page=' + ${indexPage+1}}">下一页</a>
+          </li>
+        </ul>-->
+        <!--分页结束================================================================================================-->
+          </div>
+        </td>
+      <!--原装分页结束-->
+      </tr>
+      </volist>
+    </table>
+  </div>
+</form>
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">添加用户</h4>
+      </div>
+      <div class="modal-body">
+        <!--<form action="addUser" method="post" id="regist_form">
+          用户名：<input type="text" name="username" class="button border-main icon-search" id="username" ><br><br>
+          密&nbsp码&nbsp&nbsp：<input type="password" name="password" class="button border-main icon-search"><br><br>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            <button type="submit" class="btn btn-primary">保存</button>
+          </div>
+        </form>-->
+        <form action="addUser" class="fm" method="post" onsubmit="return doTable()">
+          <table align="center">
+            <tr>
+              <td>登 陆 名 称：</td>
+              <td class="wlIcon icon">
+                <s></s>
+                <input type="text" name="username" maxlength="20" class="button border-main icon-search"/>
+                <b>*</b>
+                <span></span>
+              </td>
+            </tr>
+            <tr>
+              <td class="txt" align="right">密 码：</td>
+              <td class="wlIcon icon">
+                <s class="mm"></s>
+                <input type="password" name="password" maxlength="18" class="button border-main icon-search"/>
+                <b>*</b>
+                <span></span>
+              </td>
+            </tr>
+            <tr>
+              <td>确 认 密 码：</td>
+              <td class="wlIcon icon">
+                <s class="mm"></s>
+                <input type="password" name="repass" maxlength="18" class="button border-main icon-search"/>
+                <b>*</b>
+                <span></span>
+              </td>
+            </tr>
+            <tr>
+              <td class="wlBtns" align="center" colspan="2">
+                <s></s>
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="submit" class="btn btn-primary">保存</button>
+              </td>
+            </tr>
+          </table>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!--modal end-->
+</body>
+</html>
